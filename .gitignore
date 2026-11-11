@@ -1,0 +1,9 @@
+.keys/
+node_modules/
+state/
+build/
+contract-rs/payment-vault/target/
+*.log
+
+.env
+.env.*

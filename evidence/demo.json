@@ -1,0 +1,97 @@
+{
+  "generatedAt": "2026-11-11T18:53:49.426Z",
+  "network": "testnet",
+  "results": [
+    {
+      "scenario": "1_legit_payment",
+      "title": "Legit payment: 0.25 NEAR to the allowlisted merchant",
+      "expect": "ALLOW + tx",
+      "input": {
+        "to": "shop.agentleash2026.testnet",
+        "amountNEAR": "0.25",
+        "memo": "demo-invoice-001"
+      },
+      "result": {
+        "proposal": {
+          "to": "shop.agentleash2026.testnet",
+          "amountNEAR": "0.25",
+          "amountYocto": "250000000000000000000000",
+          "memo": "demo-invoice-001"
+        },
+        "policy": {
+          "decision": "ALLOW",
+          "reasons": [],
+          "spentTodayYocto": "250000000000000000000000"
+        },
+        "broadcast": {
+          "txHash": "6v5sZEN2GpQNHxx1yjHPrxxk5Rn1E5dBJpQUqDuAFpcX",
+          "status": {
+            "SuccessValue": "eyJyZWNpcGllbnQiOiJzaG9wLmFnZW50bGVhc2gyMDI2LnRlc3RuZXQiLCJhbW91bnRfeW9jdG8iOiIyNTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJwYXltZW50X2NvdW50IjozfQ=="
+          },
+          "explorerUrl": "https://explorer.testnet.near.org/transactions/6v5sZEN2GpQNHxx1yjHPrxxk5Rn1E5dBJpQUqDuAFpcX"
+        }
+      }
+    },
+    {
+      "scenario": "2_over_per_tx_cap",
+      "title": "Over the per-transaction cap: 0.75 NEAR (cap is 0.5)",
+      "expect": "REJECT (policy), no tx",
+      "input": {
+        "to": "shop.agentleash2026.testnet",
+        "amountNEAR": "0.75",
+        "memo": "too-big"
+      },
+      "result": {
+        "proposal": {
+          "to": "shop.agentleash2026.testnet",
+          "amountNEAR": "0.75",
+          "amountYocto": "750000000000000000000000",
+          "memo": "too-big"
+        },
+        "policy": {
+          "decision": "REJECT",
+          "reasons": [
+            "amount 0.75 NEAR exceeds per-transaction cap of 0.5 NEAR",
+            "daily cap exceeded: already spent 0.5 NEAR today, cap is 1 NEAR"
+          ],
+          "spentTodayYocto": "500000000000000000000000"
+        },
+        "broadcast": null
+      }
+    },
+    {
+      "scenario": "3_scam_lookalike",
+      "title": "Scam lookalike: 0.10 NEAR to shops.agentleash2026.testnet (note the extra \"s\")",
+      "expect": "REJECT (policy), no tx",
+      "input": {
+        "to": "shops.agentleash2026.testnet",
+        "amountNEAR": "0.10",
+        "memo": "urgent-payment"
+      },
+      "result": {
+        "proposal": {
+          "to": "shops.agentleash2026.testnet",
+          "amountNEAR": "0.10",
+          "amountYocto": "100000000000000000000000",
+          "memo": "urgent-payment"
+        },
+        "policy": {
+          "decision": "REJECT",
+          "reasons": [
+            "recipient shops.agentleash2026.testnet looks like a SCAM LOOKALIKE of allowlisted shop.agentleash2026.testnet (edit distance <= 2)"
+          ],
+          "spentTodayYocto": "500000000000000000000000"
+        },
+        "broadcast": null
+      }
+    }
+  ],
+  "vaultStatsAfter": {
+    "owner": "agentleash2026.testnet",
+    "paused": false,
+    "payment_count": 3,
+    "total_paid_yocto": "600000000000000000000000",
+    "max_per_payment_yocto": "500000000000000000000000",
+    "contract_balance_yocto": "2899301252951770300000000"
+  }
+}

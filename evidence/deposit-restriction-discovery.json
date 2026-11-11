@@ -1,0 +1,74 @@
+{
+  "generatedAt": "2026-11-11T17:17:39.210Z",
+  "network": "testnet",
+  "agentAccount": "agent.agentleash2026.testnet",
+  "vaultContract": "vault.agentleash2026.testnet",
+  "checks": [
+    {
+      "id": "A_key_permission_on_chain",
+      "leash": {
+        "FunctionCall": {
+          "allowance": "1000000000000000000000000",
+          "method_names": [
+            "pay"
+          ],
+          "receiver_id": "vault.agentleash2026.testnet"
+        }
+      },
+      "shortLeash": {
+        "FunctionCall": {
+          "allowance": "50000000000000000000000",
+          "method_names": [
+            "pay"
+          ],
+          "receiver_id": "vault.agentleash2026.testnet"
+        }
+      },
+      "allowanceBeforeYocto": "1000000000000000000000000"
+    },
+    {
+      "id": "B_allowed_call_succeeds",
+      "result": {
+        "threw": true,
+        "errorType": "AccessKeyDepositWithFunctionCallActionError",
+        "error": "Deposit is not allowed with function call"
+      },
+      "allowanceAfterYocto": "1000000000000000000000000"
+    },
+    {
+      "id": "C_wrong_contract_rejected",
+      "result": {
+        "threw": true,
+        "errorType": "AccessKeyReceiverMismatchActionError",
+        "error": "Access key receiver vault.agentleash2026.testnet does not match transaction receiver shop.agentleash2026.testnet"
+      }
+    },
+    {
+      "id": "D_forbidden_method_rejected",
+      "result": {
+        "threw": true,
+        "errorType": "AccessKeyMethodNameMismatchActionError",
+        "error": "Access key does not allow method set_paused"
+      }
+    },
+    {
+      "id": "E_allowance_cap_enforced",
+      "result": {
+        "threw": true,
+        "errorType": "AccessKeyNotEnoughAllowanceActionError",
+        "error": "Not enough allowance for access key ed25519:63DHd7WGwu9SkLA9dJkw5sf4RfvK1UJewJTAmZvH5ufx on account agent.agentleash2026.testnet (allowance: 50000000000000000000000, cost: 280919355751385000000000)"
+      }
+    },
+    {
+      "id": "F_vault_stats_after",
+      "stats": {
+        "owner": "agentleash2026.testnet",
+        "paused": false,
+        "payment_count": 0,
+        "total_paid_yocto": "0"
+      }
+    }
+  ],
+  "leashPublicKey": "ed25519:5ZZqCk2mygvpJRVi1pjR1kvLmHy7iZwPqAW7DzxgxP8D",
+  "shortLeashPublicKey": "ed25519:63DHd7WGwu9SkLA9dJkw5sf4RfvK1UJewJTAmZvH5ufx"
+}

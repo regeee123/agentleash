@@ -1,0 +1,89 @@
+{
+  "generatedAt": "2026-11-11T18:53:49.785Z",
+  "network": "testnet",
+  "agentAccount": "agent.agentleash2026.testnet",
+  "vaultContract": "vault.agentleash2026.testnet",
+  "architecture": "float pattern v2 (function-call keys cannot attach deposits)",
+  "checks": [
+    {
+      "id": "A_key_permissions_on_chain",
+      "leash": {
+        "FunctionCall": {
+          "allowance": "999237987686882300000000",
+          "method_names": [
+            "pay"
+          ],
+          "receiver_id": "vault.agentleash2026.testnet"
+        }
+      },
+      "microLeash": {
+        "FunctionCall": {
+          "allowance": "1000000000000000000000",
+          "method_names": [
+            "pay"
+          ],
+          "receiver_id": "vault.agentleash2026.testnet"
+        }
+      }
+    },
+    {
+      "id": "B_allowed_payment_succeeds",
+      "result": {
+        "threw": false,
+        "txHash": "D6BoU6earsLH4E8EcVu8gfLcNnVgcJrq8tvrPbRnW3XQ",
+        "status": {
+          "SuccessValue": "eyJyZWNpcGllbnQiOiJzaG9wLmFnZW50bGVhc2gyMDI2LnRlc3RuZXQiLCJhbW91bnRfeW9jdG8iOiIxMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJwYXltZW50X2NvdW50Ijo0fQ=="
+        },
+        "executionError": null
+      },
+      "shopReceivedYocto": "100000000000000000000000",
+      "allowanceBeforeYocto": "999237987686882300000000",
+      "allowanceAfterYocto": "999030506634960000000000"
+    },
+    {
+      "id": "C_wrong_contract_rejected",
+      "result": {
+        "threw": true,
+        "errorType": "AccessKeyReceiverMismatchActionError",
+        "error": "Access key receiver vault.agentleash2026.testnet does not match transaction receiver shop.agentleash2026.testnet"
+      }
+    },
+    {
+      "id": "D_forbidden_method_rejected",
+      "result": {
+        "threw": true,
+        "errorType": "AccessKeyMethodNameMismatchActionError",
+        "error": "Access key does not allow method set_paused"
+      }
+    },
+    {
+      "id": "E_allowance_cap_enforced",
+      "result": {
+        "threw": true,
+        "errorType": "AccessKeyNotEnoughAllowanceActionError",
+        "error": "Not enough allowance for access key ed25519:9NRCVHYbh1mEBTrFuK5894vQyVnxAhrxd7n8WyV4QsMZ on account agent.agentleash2026.testnet (allowance: 1000000000000000000000, cost: 30919579889161000000000)"
+      }
+    },
+    {
+      "id": "F_contract_per_payment_cap",
+      "result": {
+        "threw": true,
+        "errorType": "ContractExecutionError",
+        "error": "WebAssembly trap: An `unreachable` opcode was executed."
+      }
+    },
+    {
+      "id": "G_vault_stats_after",
+      "stats": {
+        "owner": "agentleash2026.testnet",
+        "paused": false,
+        "payment_count": 4,
+        "total_paid_yocto": "700000000000000000000000",
+        "max_per_payment_yocto": "500000000000000000000000",
+        "contract_balance_yocto": "2799301252951770300000000"
+      }
+    }
+  ],
+  "leashPublicKey": "ed25519:5ZZqCk2mygvpJRVi1pjR1kvLmHy7iZwPqAW7DzxgxP8D",
+  "microLeashPublicKey": "ed25519:9NRCVHYbh1mEBTrFuK5894vQyVnxAhrxd7n8WyV4QsMZ"
+}
