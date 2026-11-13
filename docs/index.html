@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AgentLeash — Policy Demo · NEAR Testnet Proofs</title>
+<meta name="description" content="AgentLeash policy demo: recorded NEAR testnet proofs of a policy-guarded wallet for AI agents — a 0.5 NEAR per-payment cap, an allowlist, and a scoped function-call key.">
+<style>
+  :root{
+    --bg:#0a0c10;
+    --panel:#11151c;
+    --panel-2:#151a23;
+    --line:#232b38;
+    --text:#e9ecf2;
+    --muted:#98a2b3;
+    --faint:#6b7484;
+    --accent:#f2a93b;
+    --accent-dim:rgba(242,169,59,.14);
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--accent);color:#0a0c10}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:980px;margin:0 auto;padding:0 24px}
+
+  /* ---------- header ---------- */
+  header{padding:72px 0 8px}
+  .eyebrow{
+    font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:22px;
+  }
+  h1{
+    font-size:clamp(44px,8vw,76px);line-height:1.02;font-weight:800;letter-spacing:-.02em;
+  }
+  h1 .leash{color:var(--accent)}
+  .pitch{
+    margin-top:22px;font-size:clamp(17px,2.4vw,21px);color:var(--muted);max-width:640px;
+  }
+  .pitch strong{color:var(--text);font-weight:600}
+  .label{
+    display:inline-block;margin-top:28px;padding:6px 14px;border:1px solid var(--line);
+    border-radius:999px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--muted);
+  }
+  .label b{color:var(--accent);font-weight:600}
+
+  /* ---------- sections ---------- */
+  section{padding:56px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px}
+  .sec-num{font-family:var(--mono);font-size:13px;color:var(--accent);letter-spacing:.15em}
+  h2{font-size:26px;font-weight:700;letter-spacing:-.01em}
+  .sec-sub{color:var(--muted);font-size:15px;max-width:680px;margin-bottom:28px}
+
+  /* ---------- rules grid ---------- */
+  .rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+  .rule{
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 20px;
+  }
+  .rule .big{font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+  .rule .big span{color:var(--accent);font-size:19px;font-weight:700}
+  .rule h3{font-size:13px;font-family:var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text);margin:10px 0 6px}
+  .rule p{font-size:13.5px;color:var(--muted)}
+
+  /* ---------- scenario cards ---------- */
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    padding:28px;margin-bottom:16px;position:relative;overflow:hidden;
+  }
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--line)}
+  .card.allow::before{background:var(--accent)}
+  .card-top{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-bottom:14px}
+  .card h3{font-size:19px;font-weight:700;letter-spacing:-.01em}
+  .pill{
+    font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.14em;
+    padding:5px 12px;border-radius:999px;border:1px solid var(--line);color:var(--muted);
+  }
+  .pill.allow{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
+  .flow{
+    display:flex;flex-wrap:wrap;align-items:center;gap:10px;
+    font-family:var(--mono);font-size:14px;margin:6px 0 14px;
+  }
+  .flow .amt{font-size:22px;font-weight:700;color:var(--text)}
+  .flow .arrow{color:var(--faint)}
+  .flow .dest{color:var(--text);word-break:break-all}
+  .card p{color:var(--muted);font-size:14.5px;max-width:720px}
+  .card p + p{margin-top:8px}
+  .reason{
+    font-family:var(--mono);font-size:13px;color:var(--text);
+    background:var(--panel-2);border:1px solid var(--line);border-radius:10px;
+    padding:12px 14px;margin-top:14px;word-break:break-word;
+  }
+  .reason .k{color:var(--faint)}
+  .tx{margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--faint);word-break:break-all}
+  .tx a{font-size:12.5px}
+
+  /* ---------- deposit rule ---------- */
+  .deposit{
+    background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:28px;
+  }
+  .deposit p{color:var(--muted);font-size:15px;max-width:740px}
+  .deposit p + p{margin-top:10px}
+  .deposit strong{color:var(--text)}
+  .err{
+    font-family:var(--mono);font-size:13.5px;color:var(--accent);
+    background:var(--accent-dim);border:1px solid var(--accent);border-radius:10px;
+    padding:14px 16px;margin:18px 0 6px;word-break:break-word;
+  }
+  .keygrid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:20px;
+  }
+  .keygrid div{border-top:1px solid var(--line);padding-top:12px}
+  .keygrid .k{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:5px}
+  .keygrid .v{font-family:var(--mono);font-size:13.5px;color:var(--text);word-break:break-all}
+
+  /* ---------- proofs table ---------- */
+  .proofs{border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .proofs table{width:100%;border-collapse:collapse;font-size:14px}
+  .proofs th,.proofs td{text-align:left;padding:13px 18px;vertical-align:top}
+  .proofs thead th{
+    font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--faint);background:var(--panel);border-bottom:1px solid var(--line);
+  }
+  .proofs tbody tr{background:var(--panel)}
+  .proofs tbody tr + tr{border-top:1px solid var(--line)}
+  .proofs td.id{font-family:var(--mono);color:var(--accent);font-weight:700;width:44px}
+  .proofs td.what{color:var(--text);font-weight:600;white-space:nowrap}
+  .proofs td.res{color:var(--muted)}
+  .proofs td.res code{font-family:var(--mono);font-size:12.5px;color:var(--text);word-break:break-word}
+  @media (max-width:640px){.proofs td.what{white-space:normal}}
+
+  /* ---------- stats strip ---------- */
+  .stats{
+    display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);border-radius:16px;
+    background:var(--panel);overflow:hidden;margin-top:28px;
+  }
+  .stat{flex:1 1 160px;padding:20px 22px}
+  .stat + .stat{border-left:1px solid var(--line)}
+  .stat .n{font-size:26px;font-weight:800;letter-spacing:-.01em}
+  .stat .n span{color:var(--accent);font-size:15px;font-weight:700}
+  .stat .l{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-top:4px}
+
+  footer{
+    margin-top:64px;border-top:1px solid var(--line);padding:30px 0 56px;
+    color:var(--faint);font-size:13px;
+  }
+  footer .wrap{display:flex;flex-wrap:wrap;gap:8px 32px;justify-content:space-between}
+  footer p{max-width:640px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">AgentLeash · Policy Demo</div>
+    <h1>An AI agent,<br>on a <span class="leash">leash</span>.</h1>
+    <p class="pitch">AgentLeash is a policy-guarded wallet for AI agents on NEAR. The agent
+    proposes payments; a policy engine screens them, a vault contract enforces a hard cap,
+    and the agent's key — scoped by the NEAR protocol itself — can do nothing else.
+    <strong>Everything on this page is a recorded testnet outcome, not a mock-up.</strong></p>
+    <span class="label"><b>DEMONSTRATION</b> · recorded NEAR testnet proofs · no real funds</span>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">01</span><h2>The rules the agent lives under</h2></div>
+    <p class="sec-sub">Set in <span style="font-family:var(--mono);font-size:13.5px">policy.json</span> and in the
+    vault contract at <span style="font-family:var(--mono);font-size:13.5px">vault.agentleash2026.testnet</span>.</p>
+    <div class="rules">
+      <div class="rule">
+        <div class="big">0.5 <span>NEAR</span></div>
+        <h3>Per-payment cap</h3>
+        <p>Enforced twice: by the policy engine before signing, and again by the vault contract on chain.</p>
+      </div>
+      <div class="rule">
+        <div class="big">1 <span>NEAR</span></div>
+        <h3>Daily cap</h3>
+        <p>Total per day, tracked in the agent's own spend ledger. A proposal that would cross it is refused.</p>
+      </div>
+      <div class="rule">
+        <div class="big">1 <span>merchant</span></div>
+        <h3>Allowlist only</h3>
+        <p>Only <span style="font-family:var(--mono);font-size:12.5px">shop.agentleash2026.testnet</span> can be paid. Anything within edit distance 2 of it is treated as a scam lookalike.</p>
+      </div>
+      <div class="rule">
+        <div class="big">0 <span>deposit</span></div>
+        <h3>Deposits forbidden</h3>
+        <p>The agent's function-call key cannot attach a deposit — the NEAR protocol rejects it. Payments come out of a pre-funded vault float instead.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Three proposals, three verdicts</h2></div>
+    <p class="sec-sub">Run through the real agent CLI stack and recorded in
+    <span style="font-family:var(--mono);font-size:13.5px">evidence/demo.json</span> (reference run, 2026-11-11).</p>
+
+    <div class="card allow">
+      <div class="card-top"><h3>Legit payment</h3><span class="pill allow">✓ POLICY: ALLOW</span></div>
+      <div class="flow"><span class="amt">0.25 NEAR</span><span class="arrow">→</span><span class="dest">shop.agentleash2026.testnet</span></div>
+      <p>Under the 0.5 NEAR cap, to the allowlisted merchant. The policy engine allowed it,
+      the agent signed with its scoped key, and the vault paid out of its float.</p>
+      <div class="tx">tx&nbsp; <a href="https://explorer.testnet.near.org/transactions/6v5sZEN2GpQNHxx1yjHPrxxk5Rn1E5dBJpQUqDuAFpcX">6v5sZEN2GpQNHxx1yjHPrxxk5Rn1E5dBJpQUqDuAFpcX</a></div>
+    </div>
+
+    <div class="card">
+      <div class="card-top"><h3>Over the cap</h3><span class="pill">✕ POLICY: REJECT</span></div>
+      <div class="flow"><span class="amt">0.75 NEAR</span><span class="arrow">→</span><span class="dest">shop.agentleash2026.testnet</span></div>
+      <p>The right recipient — but 0.75 NEAR breaks the 0.5 NEAR per-transaction cap.
+      The proposal died in the policy engine: nothing was signed, no transaction was created, no gas was spent.</p>
+      <div class="reason"><span class="k">reason —</span> amount 0.75 NEAR exceeds per-transaction cap of 0.5 NEAR · daily cap exceeded: already spent 0.5 NEAR today, cap is 1 NEAR</div>
+    </div>
+
+    <div class="card">
+      <div class="card-top"><h3>Scam lookalike</h3><span class="pill">✕ POLICY: REJECT</span></div>
+      <div class="flow"><span class="amt">0.10 NEAR</span><span class="arrow">→</span><span class="dest">shops.agentleash2026.testnet</span></div>
+      <p>Well under the cap — but note the extra “s”. The recipient is one edit away from the
+      allowlisted merchant, so the policy engine rejected it as a probable scam. No transaction was created.</p>
+      <div class="reason"><span class="k">reason —</span> recipient shops.agentleash2026.testnet looks like a SCAM LOOKALIKE of allowlisted shop.agentleash2026.testnet (edit distance &lt;= 2)</div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="n">3</div><div class="l">Payments landed (vault)</div></div>
+      <div class="stat"><div class="n">0.6 <span>NEAR</span></div><div class="l">Total paid after demo</div></div>
+      <div class="stat"><div class="n">≈2.8993 <span>NEAR</span></div><div class="l">Vault float remaining</div></div>
+      <div class="stat"><div class="n">0.5 <span>NEAR</span></div><div class="l">Contract max per payment</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">03</span><h2>The deposit rule — a protocol finding</h2></div>
+    <p class="sec-sub">Why the money sits in a vault float at all.</p>
+    <div class="deposit">
+      <p>The obvious design — the agent attaches a deposit to each <strong>pay</strong> call through its
+      function-call key — is <strong>impossible on NEAR</strong>. We tried it on testnet: the chain rejected the
+      call before any of our code ran, and the key's allowance was untouched.</p>
+      <div class="err">AccessKeyDepositWithFunctionCallActionError — “Deposit is not allowed with function call”</div>
+      <p>So the owner funds a small float into the vault contract once, and the leashed key merely
+      directs payments out of it — calling one method, on one contract, with a gas-only allowance.
+      The discovery is recorded in <span style="font-family:var(--mono);font-size:13.5px">evidence/deposit-restriction-discovery.json</span>.</p>
+      <div class="keygrid">
+        <div><div class="k">Leash key (public)</div><div class="v">ed25519:5ZZqCk2mygvpJRVi1pjR1kvLmHy7iZwPqAW7DzxgxP8D</div></div>
+        <div><div class="k">Can call</div><div class="v">pay — on vault.agentleash2026.testnet only</div></div>
+        <div><div class="k">Allowance</div><div class="v">1 NEAR, gas only</div></div>
+        <div><div class="k">Held by</div><div class="v">agent.agentleash2026.testnet</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">04</span><h2>The leash proofs</h2></div>
+    <p class="sec-sub">Seven checks against the live testnet deployment, recorded in
+    <span style="font-family:var(--mono);font-size:13.5px">evidence/leash-proof.json</span> (reference run, 2026-11-11).</p>
+    <div class="proofs">
+      <table>
+        <thead><tr><th>#</th><th>Check</th><th>On-chain result</th></tr></thead>
+        <tbody>
+          <tr><td class="id">A</td><td class="what">Key permissions</td><td class="res">Function-call key stored on chain: receiver <code>vault.agentleash2026.testnet</code>, methods <code>["pay"]</code> only.</td></tr>
+          <tr><td class="id">B</td><td class="what">Payment under cap</td><td class="res">0.1 NEAR paid to the merchant; allowance fell by gas only (≈ 0.0002 NEAR). Tx <a href="https://explorer.testnet.near.org/transactions/D6BoU6earsLH4E8EcVu8gfLcNnVgcJrq8tvrPbRnW3XQ">D6BoU6…RnW3XQ</a></td></tr>
+          <tr><td class="id">C</td><td class="what">Wrong contract</td><td class="res">Rejected by the protocol: <code>AccessKeyReceiverMismatchActionError</code></td></tr>
+          <tr><td class="id">D</td><td class="what">Forbidden method</td><td class="res">Calling <code>set_paused</code> rejected: <code>AccessKeyMethodNameMismatchActionError</code></td></tr>
+          <tr><td class="id">E</td><td class="what">Micro allowance</td><td class="res">A 0.001 NEAR-allowance key cannot even pay the gas: <code>AccessKeyNotEnoughAllowanceActionError</code></td></tr>
+          <tr><td class="id">F</td><td class="what">Over the contract cap</td><td class="res">The vault's own cap assertion rejects the payment: <code>ContractExecutionError</code></td></tr>
+          <tr><td class="id">G</td><td class="what">Vault stats after</td><td class="res">4 payments · 0.7 NEAR total paid · cap 0.5 NEAR · balance ≈ 2.7993 NEAR · not paused.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>AgentLeash — built for the NEAR Hackathon (AI Security &amp; Defense · Agent Economy).
+    Demonstration of recorded testnet proofs; NEAR testnet only, no real funds.</p>
+    <p>Source data: <span style="font-family:var(--mono);font-size:12.5px">evidence/demo.json · evidence/leash-proof.json · evidence/deposit-restriction-discovery.json</span><br>
+    Code &amp; evidence: <a href="https://github.com/regeee123/agentleash">github.com/regeee123/agentleash</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
