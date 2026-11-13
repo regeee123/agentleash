@@ -52,6 +52,10 @@
     border-radius:999px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--muted);
   }
   .label b{color:var(--accent);font-weight:600}
+  .leashline{display:flex;align-items:center;gap:14px;margin-top:30px;max-width:640px}
+  .leashline .ring{width:16px;height:16px;border:2px solid var(--accent);border-radius:50%;flex:none}
+  .leashline .line{height:2px;flex:1;background:linear-gradient(90deg,var(--accent),var(--line))}
+  .leashline .tag{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--muted);white-space:nowrap}
 
   /* ---------- sections ---------- */
   section{padding:56px 0 8px}
@@ -162,10 +166,12 @@
   <div class="wrap">
     <div class="eyebrow">AgentLeash · Policy Demo</div>
     <h1>An AI agent,<br>on a <span class="leash">leash</span>.</h1>
-    <p class="pitch">AgentLeash is a policy-guarded wallet for AI agents on NEAR. The agent
-    proposes payments; a policy engine screens them, a vault contract enforces a hard cap,
-    and the agent's key — scoped by the NEAR protocol itself — can do nothing else.
-    <strong>Everything on this page is a recorded testnet outcome, not a mock-up.</strong></p>
+    <p class="pitch">The specific trick: the agent's key is a NEAR function-call key that
+    <strong>physically cannot attach a deposit</strong> — the protocol itself rejects it — so it can only
+    direct payments out of a pre-funded vault, and the vault contract enforces a
+    <strong>hard cap of 0.5 NEAR</strong> on every payment in its own code.
+    <strong>Everything on this page is a recorded testnet outcome, not a mock-up — every claim is a transaction you can open.</strong></p>
+    <div class="leashline" aria-hidden="true"><span class="ring"></span><span class="line"></span><span class="tag">0.5 NEAR — and not a yocto more</span></div>
     <span class="label"><b>DEMONSTRATION</b> · recorded NEAR testnet proofs · no real funds</span>
   </div>
 </header>

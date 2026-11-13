@@ -4,9 +4,13 @@
 
 ### Give an AI agent money — without giving it the keys to everything.
 
-**A policy-guarded wallet for AI agents on NEAR: an off-chain policy engine, a capped
-vault contract, and a scoped function-call key — so a compromised agent can only ever
-spend a small float, in small chunks, to approved recipients.**
+**The specific trick: the agent holds a NEAR function-call key that physically
+cannot attach a deposit — the protocol itself rejects it — so it can only direct
+payments out of a pre-funded vault, and the vault contract enforces a hard
+0.5 NEAR cap on every payment in its own code. Every claim below is a testnet
+transaction you can open.**
+
+*A leash you can verify — not a guard costume.*
 
 `NEAR testnet` · `vault.agentleash2026.testnet` · `Rust (near-sdk 5)` · `MIT`
 <br/>
@@ -15,6 +19,23 @@ NEAR HACKATHON — AI Security & Defense · Agent Economy
 </div>
 
 ---
+
+## One project, built once, everything on-chain
+
+AgentLeash is a single, independent submission — built once, for this
+hackathon, not one of a series of name variants. Everything it claims is
+checkable on chain:
+
+- The vault contract is deployed at `vault.agentleash2026.testnet` (Rust,
+  near-sdk 5) and holds the float the agent can spend from.
+- The seven leash proofs (A–G below) were executed against that live
+  deployment by `node scripts/prove-leash.js` (reference run: 2026-11-11),
+  and the three policy-demo scenarios were recorded the same day — the
+  recorded outputs live in `evidence/leash-proof.json` and
+  `evidence/demo.json`.
+- Every transaction hash in the tables below opens in the testnet explorer,
+  and the demo scenarios are reproducible from the quickstart: run the
+  scripts and the chain will tell you the same story.
 
 ## Why it matters
 
